@@ -1,0 +1,90 @@
+import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
+import java.lang.IllegalArgumentException;
+import java.io.IOException;
+
+class Solution {
+    public int run(List weightArray, List valueArray, int endurance)
+            throws IllegalArgumentException {
+        if(weightArray == null || weightArray.size() == 0 ||
+                valueArray == null || valueArray.size() == 0 ||
+                weightArray.size() != valueArray.size() ||
+                endurance < 0) {
+            throw new IllegalArgumentException();
+        } else {
+            return valueMaximizing(weightArray.size() - 1, endurance, valueArray, weightArray);
+        }
+    }
+
+    private int valueMaximizing(int index, int endurance,
+                                List<Integer> valueArray, List<Integer> weightArray) {
+        if(index < 0) {
+            return 0;
+        } else {
+            int currentWeight = weightArray.get(index);
+            if(currentWeight > endurance) {
+                return valueMaximizing(index - 1, endurance, valueArray, weightArray);
+            } else {
+                int proposal1 = valueMaximizing(index - 1, endurance, valueArray, weightArray);
+                int proposal2 = valueMaximizing(index - 1, endurance - currentWeight,
+                        valueArray, weightArray);
+                int currentValue = valueArray.get(index);
+                return Math.max(proposal1, proposal2 +  currentWeight);
+            }
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args)
+            throws IOException{
+        Scanner sc = new Scanner(System.in);
+        if(sc.hasNextInt()) {
+            int endurance = sc.nextInt();
+            if(sc.hasNextInt()) {
+                int capacity = sc.nextInt();
+                if(endurance > 0 && capacity > 0) {
+                    List<Integer> weightArray = new ArrayList();
+                    for(int i = 0; i < capacity; i += 1) {
+                        if(sc.hasNextInt()) {
+                            int weight = sc.nextInt();
+                            if(weight > 0) {
+                                weightArray.add(weight);
+                            } else {
+                                throw new IOException();
+                            }
+                        } else {
+                            throw new IOException();
+                        }
+                    }
+                    List<Integer> valueArray = new ArrayList();
+                    for(int i = 0; i < capacity; i += 1) {
+                        if(sc.hasNextInt()) {
+                            int value = sc.nextInt();
+                            if(value > 0) {
+                                valueArray.add(value);
+                            } else {
+                                throw new IOException();
+                            }
+                        } else {
+                            throw new IOException();
+                        }
+                    }
+
+                    Solution solution = new Solution();
+                    int result = solution.run(weightArray, valueArray, endurance);
+                    System.out.println(result);
+
+                } else {
+                    throw new IOException();
+                }
+            } else {
+                throw new IOException();
+            }
+        } else {
+            throw new IOException();
+        }
+    }
+}
+
